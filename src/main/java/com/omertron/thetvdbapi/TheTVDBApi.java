@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.xml.ws.WebServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +87,7 @@ public class TheTVDBApi {
      *
      * @return True if everything is OK, false otherwise.
      */
-    private static void getMirrors(String apiKey) {
+    private static void getMirrors(String apiKey) throws Exception {
         // If we don't need to get the mirrors, then just return
         if (xmlMirror != null && bannerMirror != null) {
             return;
@@ -99,13 +98,13 @@ public class TheTVDBApi {
         bannerMirror = mirrors.getMirror(Mirrors.TYPE_BANNER);
 
         if (xmlMirror == null) {
-            throw new WebServiceException("There is a problem getting the xmlMirror data from TheTVDB, this means it is likely to be down.");
+            throw new Exception("There is a problem getting the xmlMirror data from TheTVDB, this means it is likely to be down.");
         } else {
             xmlMirror += "/api/";
         }
 
         if (bannerMirror == null) {
-            throw new WebServiceException("There is a problem getting the bannerMirror data from TheTVDB, this means it is likely to be down.");
+            throw new Exception("There is a problem getting the bannerMirror data from TheTVDB, this means it is likely to be down.");
         } else {
             bannerMirror += "/banners/";
         }
@@ -167,7 +166,7 @@ public class TheTVDBApi {
             if (language != null) {
                 urlBuilder.append(language).append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return null;
         }
@@ -202,7 +201,7 @@ public class TheTVDBApi {
             if (language != null) {
                 urlBuilder.append(language).append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return null;
         }
@@ -234,7 +233,7 @@ public class TheTVDBApi {
             if (language != null) {
                 urlBuilder.append(language).append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return null;
         }
@@ -276,7 +275,7 @@ public class TheTVDBApi {
             if (language != null) {
                 urlBuilder.append(language).append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new Episode();
         }
@@ -308,7 +307,7 @@ public class TheTVDBApi {
             if (language != null) {
                 urlBuilder.append(language).append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new Episode();
         }
@@ -337,7 +336,7 @@ public class TheTVDBApi {
             if (language != null) {
                 urlBuilder.append(language).append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new Episode();
         }
@@ -385,7 +384,7 @@ public class TheTVDBApi {
             urlBuilder.append(SERIES_URL);
             urlBuilder.append(seriesId);
             urlBuilder.append("/banners.xml");
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new Banners();
         }
@@ -407,7 +406,7 @@ public class TheTVDBApi {
             urlBuilder.append(SERIES_URL);
             urlBuilder.append(seriesId);
             urlBuilder.append("/actors.xml");
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new ArrayList<Actor>();
         }
@@ -427,7 +426,7 @@ public class TheTVDBApi {
         } catch (UnsupportedEncodingException e) {
             // Try and use the raw title
             urlBuilder.append(title);
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new ArrayList<Series>();
         }
@@ -455,7 +454,7 @@ public class TheTVDBApi {
                 urlBuilder.append(language);
                 urlBuilder.append(XML_EXTENSION);
             }
-        } catch (WebServiceException ex) {
+        } catch (Exception ex) {
             LOG.warn(ex.getMessage());
             return new Episode();
         }
@@ -482,7 +481,11 @@ public class TheTVDBApi {
      */
     public static String getXmlMirror(String apiKey) {
         // Force a load of the mirror information if it doesn't exist
-        getMirrors(apiKey);
+        try {
+            getMirrors(apiKey);
+        } catch (Exception ex) {
+            LOG.warn(ex.getMessage());
+        }
         return xmlMirror;
     }
 
@@ -494,7 +497,11 @@ public class TheTVDBApi {
      */
     public static String getBannerMirror(String apiKey) {
         // Force a load of the mirror information if it doesn't exist
-        getMirrors(apiKey);
+        try {
+            getMirrors(apiKey);
+        } catch (Exception ex) {
+            LOG.warn(ex.getMessage());
+        }
         return bannerMirror;
     }
 
